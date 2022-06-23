@@ -10,7 +10,7 @@ fn main() -> Result<()> {
     match args.action {
         commands::Action::Preview { file } => {
             let form = form::deserialize(&file)?;
-            println!("{:#?}", form);
+            println!("{:#?}", form.to_html().into_string());
         }
     }
 
