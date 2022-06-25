@@ -1,9 +1,13 @@
 use anyhow::{Context, Result};
 use maud::{html, Markup, PreEscaped, Render, DOCTYPE};
 use serde::Deserialize;
-use std::{fmt::Debug, fs};
+use std::{
+    fmt::{Debug, Display},
+    fs,
+    path::Path,
+};
 
-pub fn deserialize(file: &str) -> Result<IssueForm> {
+pub fn deserialize(file: impl AsRef<Path> + Display + Copy) -> Result<IssueForm> {
     let f = fs::File::open(file).with_context(|| format!("Failed to open {}", file))?;
     let form: IssueForm = serde_yaml::from_reader(f)?;
     return Ok(form);
@@ -48,6 +52,17 @@ impl IssueForm {
                         }
                     }
                 }
+            }
+        }
+    }
+    pub fn summarize(&self, link: &str) -> Markup {
+        html! {
+            div.summary {
+                div {
+                    strong.name {(self.name)}
+                    div.description {(self.description)}
+                }
+                a.button href=(link) {"Preview"}
             }
         }
     }

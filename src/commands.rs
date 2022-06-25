@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
@@ -11,7 +13,11 @@ pub struct Args {
 pub enum Action {
     /// Start a local server to preview issue form
     Preview {
-        /// YAML-formatted issue form
-        file: String,
+        /// Path to the directory where issue forms are located
+        #[clap(short, long, default_value = ".github/ISSUE_TEMPLATE")]
+        directory: PathBuf,
+        #[clap(short, long, default_value = "8047")]
+        /// Port to bind
+        port: u16,
     },
 }
