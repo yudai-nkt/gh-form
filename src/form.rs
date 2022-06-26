@@ -175,7 +175,7 @@ impl Render for BodyType {
                         }
                     }
                     div."body-description" {(attributes.description)}
-                    textarea."form-textarea" disabled="disabled" placeholder=(attributes.placeholder) {(attributes.value)}
+                    textarea."form-textarea" disabled="disabled" placeholder=(attributes.placeholder) lang=[(&attributes.render)] {(attributes.value)}
                 }
             }
         }

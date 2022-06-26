@@ -53,6 +53,11 @@ h3[required="required"]::after {
   color: var(--color-danger-fg);
 }
 
+textarea[lang] {
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
+    Liberation Mono, monospace;
+}
+
 .form-list-container {
   position: relative;
   color: var(--color-fg-default);
