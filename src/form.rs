@@ -1,5 +1,6 @@
 use anyhow::{Context, Result};
 use maud::{html, Markup, PreEscaped, Render, DOCTYPE};
+use pulldown_cmark::{html, Event, Parser, Tag};
 use serde::Deserialize;
 use std::{
     fmt::{Debug, Display},
@@ -109,7 +110,7 @@ impl Render for BodyType {
                     div {
                         @for option in &attributes.options {
                             div {
-                                input type="checkbox" disabled="disabled" value=(option.label);
+                                input type="checkbox" disabled="disabled" value=(option.label.render().into_string());
                                 label."checkbox-label" {(option.label)}
                                 @if option.required { span."checkbox-required" {"*"} }
                             }
@@ -184,14 +185,14 @@ impl Render for BodyType {
 #[derive(Debug, Deserialize)]
 struct CheckboxesAttribute {
     label: String,
-    #[serde(default = "default_empty_string")]
-    description: String,
+    #[serde(default = "default_empty_markdown")]
+    description: Markdown,
     options: Vec<CheckboxesOption>,
 }
 
 #[derive(Debug, Deserialize)]
 struct CheckboxesOption {
-    label: String,
+    label: Markdown,
     #[serde(default = "default_false")]
     required: bool,
 }
@@ -199,8 +200,8 @@ struct CheckboxesOption {
 #[derive(Debug, Deserialize)]
 struct DropdownAttribute {
     label: String,
-    #[serde(default = "default_empty_string")]
-    description: String,
+    #[serde(default = "default_empty_markdown")]
+    description: Markdown,
     #[serde(default = "default_false")]
     multiple: bool,
     options: Vec<String>,
@@ -209,8 +210,8 @@ struct DropdownAttribute {
 #[derive(Debug, Deserialize)]
 struct InputAttribute {
     label: String,
-    #[serde(default = "default_empty_string")]
-    description: String,
+    #[serde(default = "default_empty_markdown")]
+    description: Markdown,
     #[serde(default = "default_empty_string")]
     placeholder: String,
     value: Option<String>,
@@ -224,8 +225,8 @@ struct MarkdownAttribute {
 #[derive(Debug, Deserialize)]
 struct TextareaAttribute {
     label: String,
-    #[serde(default = "default_empty_string")]
-    description: String,
+    #[serde(default = "default_empty_markdown")]
+    description: Markdown,
     #[serde(default = "default_empty_string")]
     placeholder: String,
     #[serde(default = "default_empty_string")]
@@ -239,8 +240,31 @@ struct Validations {
     required: bool,
 }
 
+#[derive(Debug, Deserialize)]
+struct Markdown(String);
+
+impl Render for Markdown {
+    fn render(&self) -> Markup {
+        let mut output = String::new();
+        // The filter method strips off the outermost paragraph element.
+        // This is required to render checkbox labels properly.
+        // cf. https://github.com/raphlinus/pulldown-cmark/issues/543
+        let parser = Parser::new(self.0.as_ref()).filter(|event| match event {
+            Event::Start(Tag::Paragraph) => false,
+            Event::End(Tag::Paragraph) => false,
+            _ => true,
+        });
+        html::push_html(&mut output, parser);
+        PreEscaped(output)
+    }
+}
+
 fn default_empty_string() -> String {
     "".to_string()
+}
+
+fn default_empty_markdown() -> Markdown {
+    Markdown(default_empty_string())
 }
 
 fn default_false() -> bool {
