@@ -106,7 +106,7 @@ impl Render for BodyType {
                             h3 {(attributes.label)}
                         }
                     }
-                    p {(attributes.description)}
+                    div."body-description" {(attributes.description)}
                     div {
                         @for option in &attributes.options {
                             div {
@@ -130,7 +130,7 @@ impl Render for BodyType {
                             h3 required=(required) {(attributes.label)}
                         }
                     }
-                    p {(attributes.description)}
+                    div."body-description" {(attributes.description)}
                     @for option in &attributes.options {
                         div {
                             input
@@ -153,7 +153,7 @@ impl Render for BodyType {
                             h3 required=(required) {(attributes.label)}
                         }
                     }
-                    p {(attributes.description)}
+                    div."body-description" {(attributes.description)}
                     input."form-input" type="text" disabled="disabled" placeholder=(attributes.placeholder) value=[(&attributes.value)];
                 }
             }
@@ -174,7 +174,7 @@ impl Render for BodyType {
                             h3 required=(required) {(attributes.label)}
                         }
                     }
-                    p {(attributes.description)}
+                    div."body-description" {(attributes.description)}
                     textarea."form-textarea" disabled="disabled" placeholder=(attributes.placeholder) {(attributes.value)}
                 }
             }
@@ -192,7 +192,7 @@ struct CheckboxesAttribute {
 
 #[derive(Debug, Deserialize)]
 struct CheckboxesOption {
-    label: Markdown,
+    label: MarkdownInline,
     #[serde(default = "default_false")]
     required: bool,
 }
@@ -244,6 +244,18 @@ struct Validations {
 struct Markdown(String);
 
 impl Render for Markdown {
+    fn render(&self) -> Markup {
+        let mut output = String::new();
+        let parser = Parser::new(self.0.as_ref());
+        html::push_html(&mut output, parser);
+        PreEscaped(output)
+    }
+}
+
+#[derive(Debug, Deserialize)]
+struct MarkdownInline(String);
+
+impl Render for MarkdownInline {
     fn render(&self) -> Markup {
         let mut output = String::new();
         // The filter method strips off the outermost paragraph element.
