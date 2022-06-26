@@ -108,9 +108,11 @@ impl Render for BodyType {
                     p {(attributes.description)}
                     div {
                         @for option in &attributes.options {
-                            input type="checkbox" disabled="disabled" value=(option.label);
-                            label."checkbox-label" {(option.label)}
-                            @if option.required { span."checkbox-required" {"*"} }
+                            div {
+                                input type="checkbox" disabled="disabled" value=(option.label);
+                                label."checkbox-label" {(option.label)}
+                                @if option.required { span."checkbox-required" {"*"} }
+                            }
                         }
                     }
                 }
