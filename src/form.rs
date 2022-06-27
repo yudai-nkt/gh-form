@@ -159,7 +159,7 @@ impl Render for BodyType {
             }
             BodyType::Markdown { attributes } => {
                 html! {
-                    p {(attributes.value)}
+                    div."markdown-description" {(attributes.value)}
                 }
             }
             BodyType::Textarea {
@@ -219,7 +219,7 @@ struct InputAttribute {
 
 #[derive(Debug, Deserialize)]
 struct MarkdownAttribute {
-    value: String,
+    value: Markdown,
 }
 
 #[derive(Debug, Deserialize)]

@@ -27,6 +27,14 @@
   color: var(--color-fg-muted);
 }
 
+.markdown-description {
+  font-size: 14px;
+}
+
+h3.markdown-description {
+  font-size: 1.25em;
+}
+
 .checkbox-label {
   margin-left: 4px;
 }
