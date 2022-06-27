@@ -18,6 +18,10 @@ pub fn deserialize(file: impl AsRef<Path> + Display + Copy) -> Result<IssueForm>
 pub struct IssueForm {
     name: String,
     description: String,
+    // The optional title is in the issue form's spec, but is not used
+    // for preview at the moment. Hence the warning suppression.
+    // cf. https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms#top-level-syntax
+    #[allow(dead_code)]
     title: Option<String>,
     #[serde(default = "default_empty_vec")]
     labels: Vec<String>,
@@ -41,6 +45,26 @@ impl IssueForm {
                     href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown.min.css";
                 style {(PreEscaped(include_str!("assets/extra.css")))}
                 body ."markdown-body" {
+                    article {
+                        table role="table" {
+                            thead {
+                                tr {
+                                    th align="left" {"Name"}
+                                    th align="left" {"About"}
+                                    th align="left" {"Labels"}
+                                    th align="left" {"Assignees"}
+                                }
+                            }
+                            tbody {
+                                tr {
+                                    td align="left" {(self.name)}
+                                    td align="left" {(self.description)}
+                                    td align="left" {(self.labels.join(", "))}
+                                    td align="left" {(self.assignees.join(", "))}
+                                }
+                            }
+                        }
+                    }
                     table {
                         tbody {
                             tr {
