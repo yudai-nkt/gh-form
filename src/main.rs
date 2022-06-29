@@ -110,7 +110,7 @@ async fn preview(
 }
 
 fn list_yamls<P: AsRef<Path>>(path: P) -> Result<Vec<String>> {
-    Ok(std::fs::read_dir(path)?
+    let mut yamls = std::fs::read_dir(path)?
         .filter_map(|entry| {
             let entry = entry.ok()?;
             if entry.file_type().ok()?.is_file() {
@@ -124,5 +124,7 @@ fn list_yamls<P: AsRef<Path>>(path: P) -> Result<Vec<String>> {
                 None
             }
         })
-        .collect())
+        .collect::<Vec<_>>();
+    yamls.sort();
+    Ok(yamls)
 }
