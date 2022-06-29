@@ -17,7 +17,7 @@ use axum::{
 };
 use clap::Parser;
 use maud::{html, PreEscaped, DOCTYPE};
-use tracing::{error, info};
+use tracing::{error, info, warn};
 
 struct AppState {
     directory: PathBuf,
@@ -69,11 +69,14 @@ async fn top_page(Extension(state): Extension<Arc<AppState>>) -> impl IntoRespon
                             @for yaml in value {
                                 (form::deserialize(&*state.directory.join(&yaml).to_string_lossy())
                                     .map_or_else(
-                                        |err| html! {
-                                            div.summary {
-                                                div {
-                                                    div {(format!("Failed to deserialize {yaml}"))}
-                                                    pre {(format!("{err}"))}
+                                        |err| {
+                                            warn!("Failed to deserialize {}", yaml);
+                                            html! {
+                                                div.summary {
+                                                    div {
+                                                        div {(format!("Failed to deserialize {yaml}"))}
+                                                        pre {(format!("{err}"))}
+                                                    }
                                                 }
                                             }
                                         },
