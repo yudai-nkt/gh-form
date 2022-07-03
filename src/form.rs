@@ -155,12 +155,18 @@ impl Render for BodyType {
                         }
                     }
                     div."body-description" {(attributes.description)}
-                    @for option in &attributes.options {
-                        div {
-                            input
-                                type=(if attributes.multiple {"checkbox"} else {"radio"})
-                                name=(format!("issue-form[{}]", id));
-                            label."checkbox-label" {(option)}
+                    details ."dropdown-container" {
+                        summary role="button" {"Selection: "}
+                        div.choices {
+                            @for option in &attributes.options {
+                                label."checkbox-label" {
+                                    input
+                                        type=(if attributes.multiple {"checkbox"} else {"radio"})
+                                        name=(format!("issue-form[{}]", id))
+                                        value=(option);
+                                    div {(option)}
+                                }
+                            }
                         }
                     }
                 }
