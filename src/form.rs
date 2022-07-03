@@ -163,7 +163,9 @@ impl Render for BodyType {
                                     input
                                         type=(if attributes.multiple {"checkbox"} else {"radio"})
                                         name=(format!("issue-form[{}]", id))
+                                        hidden
                                         value=(option);
+                                    div.checkmark {"✓"}
                                     div {(option)}
                                 }
                             }

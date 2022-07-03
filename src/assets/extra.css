@@ -138,6 +138,15 @@ details.dropdown-container label.checkbox-label:hover {
   background-color: var(--ghf-color-neutral-subtle);
 }
 
+details.dropdown-container .checkbox-label input + .checkmark {
+  visibility: hidden;
+  padding-right: 4px;
+}
+
+details.dropdown-container .checkbox-label input:checked + .checkmark {
+  visibility: visible;
+}
+
 
 textarea[lang] {
   font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas,
