@@ -1,6 +1,10 @@
 use anyhow::{Context, Result};
 use maud::{html, Markup, PreEscaped, Render, DOCTYPE};
 use pulldown_cmark::{html, Event, Parser, Tag};
+use rsass::{
+    compile_scss,
+    output::{Format, Style},
+};
 use serde::Deserialize;
 use std::{
     fmt::{Debug, Display},
@@ -32,6 +36,18 @@ pub struct IssueForm {
 
 impl IssueForm {
     pub fn to_html(&self) -> Markup {
+        let css = String::from_utf8(
+            compile_scss(
+                include_str!("assets/extra.scss").as_bytes(),
+                Format {
+                    style: Style::Compressed,
+                    precision: 5,
+                },
+            )
+            .expect("Stylesheet is embedded at compile-time, so this should never fail.")
+            .to_vec(),
+        )
+        .expect("Stylesheet is embedded at compile-time, so this should never fail.");
         html! {
             (DOCTYPE)
             html lang="en" {
@@ -43,7 +59,7 @@ impl IssueForm {
                     rel="stylesheet"
                     type="text/css"
                     href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown.min.css";
-                style {(PreEscaped(include_str!("assets/extra.css")))}
+                style {(PreEscaped(css))}
                 body ."markdown-body" {
                     article {
                         table role="table" {

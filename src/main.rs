@@ -17,6 +17,10 @@ use axum::{
 };
 use clap::Parser;
 use maud::{html, PreEscaped, DOCTYPE};
+use rsass::{
+    compile_scss,
+    output::{Format, Style},
+};
 use tracing::{error, info, warn};
 
 struct AppState {
@@ -52,6 +56,18 @@ async fn top_page(Extension(state): Extension<Arc<AppState>>) -> impl IntoRespon
     let yamls = list_yamls(&state.directory);
     yamls
         .map(|value| {
+            let css = String::from_utf8(
+                compile_scss(
+                    include_str!("assets/extra.scss").as_bytes(),
+                    Format {
+                        style: Style::Compressed,
+                        precision: 5,
+                    },
+                )
+                .expect("Stylesheet is embedded at compile-time, so this should never fail.")
+                .to_vec(),
+            )
+            .expect("Stylesheet is embedded at compile-time, so this should never fail.");
             html! {
                 (DOCTYPE)
                 html lang="en" {
@@ -63,7 +79,7 @@ async fn top_page(Extension(state): Extension<Arc<AppState>>) -> impl IntoRespon
                         rel="stylesheet"
                         type="text/css"
                         href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown.min.css";
-                    style {(PreEscaped(include_str!("assets/extra.css")))}
+                    style {(PreEscaped(css))}
                     body ."markdown-body" {
                         div."form-list-container" {
                             @for yaml in value {
