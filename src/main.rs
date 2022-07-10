@@ -9,18 +9,20 @@ use std::{
 
 use anyhow::Result;
 use axum::{
+    body::{boxed, Full},
     extract,
-    http::StatusCode,
-    response::{Html, IntoResponse},
+    http::{header, StatusCode, Uri},
+    response::{Html, IntoResponse, Response},
     routing::get,
     Extension, Router,
 };
 use clap::Parser;
-use maud::{html, PreEscaped, DOCTYPE};
+use maud::{html, DOCTYPE};
 use rsass::{
     compile_scss,
     output::{Format, Style},
 };
+use rust_embed::RustEmbed;
 use tracing::{error, info, warn};
 
 struct AppState {
@@ -38,6 +40,7 @@ async fn main() -> Result<()> {
             let app = Router::new()
                 .route("/", get(top_page))
                 .route("/:yaml", get(preview))
+                .route("/assets/*file", get(serve_static))
                 .layer(Extension(state));
 
             let addr = SocketAddr::from(([127, 0, 0, 1], port));
@@ -56,18 +59,6 @@ async fn top_page(Extension(state): Extension<Arc<AppState>>) -> impl IntoRespon
     let yamls = list_yamls(&state.directory);
     yamls
         .map(|value| {
-            let css = String::from_utf8(
-                compile_scss(
-                    include_str!("assets/extra.scss").as_bytes(),
-                    Format {
-                        style: Style::Compressed,
-                        precision: 5,
-                    },
-                )
-                .expect("Stylesheet is embedded at compile-time, so this should never fail.")
-                .to_vec(),
-            )
-            .expect("Stylesheet is embedded at compile-time, so this should never fail.");
             html! {
                 (DOCTYPE)
                 html lang="en" {
@@ -79,7 +70,10 @@ async fn top_page(Extension(state): Extension<Arc<AppState>>) -> impl IntoRespon
                         rel="stylesheet"
                         type="text/css"
                         href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown.min.css";
-                    style {(PreEscaped(css))}
+                    link
+                        rel="stylesheet"
+                        type="text/css"
+                        href="/assets/extra.css";
                     body ."markdown-body" {
                         div."form-list-container" {
                             @for yaml in value {
@@ -146,4 +140,58 @@ fn list_yamls<P: AsRef<Path>>(path: P) -> Result<Vec<String>> {
         .collect::<Vec<_>>();
     yamls.sort();
     Ok(yamls)
+}
+
+async fn serve_static(uri: Uri) -> impl IntoResponse {
+    let mut path = uri.path().trim_start_matches('/').to_string();
+
+    if path.starts_with("assets/") {
+        path = path.replace("assets/", "");
+    }
+
+    if path.ends_with(".css") {
+        path = path.replace(".css", ".scss");
+    }
+
+    StaticFile(path)
+}
+
+#[derive(RustEmbed)]
+#[folder = "src/assets/"]
+struct Asset;
+
+struct StaticFile<T>(pub T);
+
+impl<T> IntoResponse for StaticFile<T>
+where
+    T: Into<String>,
+{
+    fn into_response(self) -> Response {
+        let path = self.0.into();
+
+        match Asset::get(path.as_str()) {
+            Some(content) => {
+                let compiled_css = String::from_utf8(
+                    compile_scss(
+                        &content.data,
+                        Format {
+                            style: Style::Compressed,
+                            precision: 5,
+                        },
+                    )
+                    .expect("Stylesheet is embedded at compile-time, so this should never fail.")
+                    .to_vec(),
+                )
+                .expect("Stylesheet is embedded at compile-time, so this should never fail.");
+                Response::builder()
+                    .header(header::CONTENT_TYPE, "text/css")
+                    .body(boxed(Full::from(compiled_css)))
+                    .unwrap()
+            }
+            None => Response::builder()
+                .status(StatusCode::NOT_FOUND)
+                .body(boxed(Full::from(format!("Asset {path} not found"))))
+                .unwrap(),
+        }
+    }
 }
