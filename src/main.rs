@@ -116,9 +116,12 @@ async fn preview(
             .to_string_lossy(),
     )
     .map(|f| Html(f.to_html().into_string()))
-    .map_err(|err| {
-        error!("{}", err);
-        StatusCode::INTERNAL_SERVER_ERROR
+    .map_err(|err| match &*yaml {
+        "favicon.ico" => StatusCode::NOT_FOUND,
+        _ => {
+            error!("{}", err);
+            StatusCode::INTERNAL_SERVER_ERROR
+        }
     })
 }
 
