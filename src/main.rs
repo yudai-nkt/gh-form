@@ -131,7 +131,7 @@ fn list_yamls<P: AsRef<Path>>(path: P) -> Result<Vec<String>> {
             let entry = entry.ok()?;
             if entry.file_type().ok()?.is_file() {
                 let file_name = entry.file_name().to_string_lossy().into_owned();
-                if file_name.ends_with(".yaml") {
+                if file_name.ends_with(".yaml") || file_name.ends_with(".yml") {
                     Some(file_name)
                 } else {
                     None
