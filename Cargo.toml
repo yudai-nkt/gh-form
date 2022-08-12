@@ -3,6 +3,12 @@ name = "gh-form"
 version = "0.1.0"
 authors = ["Yudai Nakata <yudai.nkt@gmail.com>"]
 edition = "2021"
+license = "MIT"
+description = ""
+repository = "https://github.com/yudai-nkt/gh-form"
+readme = "README.md"
+categories = ["command-line-utilities"]
+keywords = ["cli", "github"]
 
 [dependencies]
 anyhow = "1.0.58"
