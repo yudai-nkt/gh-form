@@ -1,0 +1,43 @@
+name: Bug report
+description: Report a bug of gh-form
+labels:
+  - bug
+  - not reproduced yet
+body:
+  - type: checkboxes
+    id: todo-list
+    attributes:
+      label: Before submitting an issue, make sure that
+      options:
+        - label: You use the latest version of gh-form
+          required: true
+        - label: You have searched for existing issues and confirmed that yours is not a duplicate
+          required: true
+  - type: textarea
+    id: brief-description
+    attributes:
+      label: Brief description of the bug
+      description: Concisely describe the issue you are having.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction-step
+    attributes:
+      label: Steps to reproduce
+      description: Describe a step-by-step guide to reproduce your bug.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Result
+      description: What actually happened?
+    validations:
+      required: true

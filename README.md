@@ -5,7 +5,6 @@ Don't let malformed issue forms pushed to GitHub
 ## Overview
 
 gh-form enables you to locally preview [YAML-formatted issue forms](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms) as HTML.
-Example below is taken from [TypeScript ESLint](https://github.com/typescript-eslint/typescript-eslint)'s issue template.
 
 ![Screenshot of gh-form's preview](./img/preview.png)
 
