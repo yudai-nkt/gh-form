@@ -23,11 +23,27 @@ pub struct IssueForm {
     // cf. https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms#top-level-syntax
     #[allow(dead_code)]
     title: Option<String>,
-    #[serde(default = "default_empty_vec")]
-    labels: Vec<String>,
-    #[serde(default = "default_empty_vec")]
-    assignees: Vec<String>,
+    #[serde(default = "default_empty_sequecelike")]
+    labels: SequenceLike,
+    #[serde(default = "default_empty_sequecelike")]
+    assignees: SequenceLike,
     body: Vec<BodyType>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(untagged)]
+enum SequenceLike {
+    Sequence(Vec<String>),
+    CommaDelimited(String),
+}
+
+impl SequenceLike {
+    fn join(&self) -> String {
+        match self {
+            Self::Sequence(seq) => seq.join(", "),
+            Self::CommaDelimited(labels) => labels.split(",").collect::<Vec<_>>().join(", "),
+        }
+    }
 }
 
 impl IssueForm {
@@ -62,8 +78,8 @@ impl IssueForm {
                                 tr {
                                     td align="left" {(self.name)}
                                     td align="left" {(self.description)}
-                                    td align="left" {(self.labels.join(", "))}
-                                    td align="left" {(self.assignees.join(", "))}
+                                    td align="left" {(self.labels.join())}
+                                    td align="left" {(self.assignees.join())}
                                 }
                             }
                         }
@@ -318,8 +334,8 @@ fn default_false() -> bool {
     false
 }
 
-fn default_empty_vec<T>() -> Vec<T> {
-    vec![]
+fn default_empty_sequecelike() -> SequenceLike {
+    SequenceLike::Sequence(vec![])
 }
 
 fn is_required(validations: &Option<Validations>) -> &str {
