@@ -1,10 +1,12 @@
 # gh-form
 
+[![Badge for GitHub Releases](https://img.shields.io/github/v/release/yudai-nkt/gh-form)](https://github.com/yudai-nkt/gh-form/releases)
+
 Don't let malformed issue forms pushed to GitHub
 
 ## Overview
 
-gh-form enables you to locally preview [YAML-formatted issue forms](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms) as HTML.
+gh-form allows you to locally preview [YAML-formatted issue forms](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms) as HTML.
 
 ![Screenshot of gh-form's preview](./img/preview.png)
 
