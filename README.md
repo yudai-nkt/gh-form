@@ -22,7 +22,9 @@ gh extension install yudai-nkt/gh-form
 
 ### Rustaceans
 
-gh-form is also available on crates.io:
+~~gh-form is also available on crates.io:~~
+This is currently unavailable due to a limitation in dependencies.
+Please refer to [lambda-fairy/maud#339](https://github.com/lambda-fairy/maud/issues/339) for details.
 
 ```console
 cargo install gh-form
