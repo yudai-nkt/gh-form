@@ -21,7 +21,7 @@ jobs:
           build_script_override: "script/build.sh"
         env:
           TARGET: x86_64-apple-darwin
-          OS_ARCH_EXT: -darwin-amd64
+          OS_ARCH_EXT: darwin-amd64
       # The gh-extension-precomiple does not support release from multiple jobs.
       # cf. https://github.com/KOBA789/gh-sql/pull/4/commits/fe30d12dbac9afdb662ad09552fc65ef469d4712
       - uses: actions-rs/toolchain@v1
