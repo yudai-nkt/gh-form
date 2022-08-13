@@ -30,22 +30,6 @@ pub struct IssueForm {
     body: Vec<BodyType>,
 }
 
-#[derive(Debug, Deserialize)]
-#[serde(untagged)]
-enum SequenceLike {
-    Sequence(Vec<String>),
-    CommaDelimited(String),
-}
-
-impl SequenceLike {
-    fn join(&self) -> String {
-        match self {
-            Self::Sequence(seq) => seq.join(", "),
-            Self::CommaDelimited(labels) => labels.split(",").collect::<Vec<_>>().join(", "),
-        }
-    }
-}
-
 impl IssueForm {
     pub fn to_html(&self) -> Markup {
         html! {
@@ -108,6 +92,22 @@ impl IssueForm {
                 }
                 a.button href=(link) {"Preview"}
             }
+        }
+    }
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(untagged)]
+enum SequenceLike {
+    Sequence(Vec<String>),
+    CommaDelimited(String),
+}
+
+impl SequenceLike {
+    fn join(&self) -> String {
+        match self {
+            Self::Sequence(seq) => seq.join(", "),
+            Self::CommaDelimited(labels) => labels.split(",").collect::<Vec<_>>().join(", "),
         }
     }
 }
