@@ -60,7 +60,7 @@ pub async fn top_page(Extension(state): Extension<Arc<AppState>>) -> impl IntoRe
                                                 }
                                             }
                                         },
-                                        |val| val.summarize(yaml.trim_end_matches(".yaml"))
+                                        |val| val.summarize(&yaml)
                                     )
                                 )
                             }
@@ -79,20 +79,15 @@ pub async fn preview(
     extract::Path(yaml): extract::Path<String>,
     Extension(state): Extension<Arc<AppState>>,
 ) -> impl IntoResponse {
-    form::deserialize(
-        &*state
-            .directory
-            .join(format!("{}.yaml", yaml))
-            .to_string_lossy(),
-    )
-    .map(|f| Html(f.to_html().into_string()))
-    .map_err(|err| match &*yaml {
-        "favicon.ico" => StatusCode::NOT_FOUND,
-        _ => {
-            error!("{}", err);
-            StatusCode::INTERNAL_SERVER_ERROR
-        }
-    })
+    form::deserialize(&*state.directory.join(&yaml).to_string_lossy())
+        .map(|f| Html(f.to_html().into_string()))
+        .map_err(|err| match &*yaml {
+            "favicon.ico" => StatusCode::NOT_FOUND,
+            _ => {
+                error!("{}", err);
+                StatusCode::INTERNAL_SERVER_ERROR
+            }
+        })
 }
 
 fn list_yamls<P: AsRef<Path>>(path: P) -> Result<Vec<String>> {
