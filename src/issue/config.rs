@@ -10,13 +10,13 @@ pub fn deserialize(file: impl AsRef<Path> + Display + Copy) -> Result<Config> {
     return Ok(config);
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct Config {
     blank_issues_enabled: bool,
     contact_links: Vec<ContactLink>,
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Debug, Deserialize)]
 struct ContactLink {
     name: String,
     url: String,
