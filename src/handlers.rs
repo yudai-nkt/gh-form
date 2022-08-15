@@ -71,11 +71,12 @@ pub async fn top_page(Extension(state): Extension<Arc<AppState>>) -> impl IntoRe
                                     )
                                 )
                             }
-                            @if let Some(c) = config {
-                                (c.map_or_else(
-                                    |err| {
+                            @if let Some(ref c) = config {
+                                (match c {
+                                    Ok(val)=>{val.render()}
+                                    Err(err)=>{
                                         warn!("Failed to deserialize config.yml");
-                                        html! {
+                                        html!{
                                             div.summary {
                                                 div {
                                                     div {(format!("Failed to deserialize config.yml"))}
@@ -83,9 +84,13 @@ pub async fn top_page(Extension(state): Extension<Arc<AppState>>) -> impl IntoRe
                                                 }
                                             }
                                         }
-                                    },
-                                    |val| val.render()
-                                ))
+                                    }
+                                })
+                            }
+                        }
+                        @if let Some(Ok(c)) = config {
+                            @if let Some(footnote) = c.footnote() {
+                                (footnote)
                             }
                         }
                     }

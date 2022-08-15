@@ -164,6 +164,11 @@ textarea[lang] {
   background-color: var(--color-canvas-default);
   border: 1px solid var(--color-border-default);
   border-radius: 6px;
+
+  & ~ div.footnote {
+    padding-top: 16px;
+    font-size: 14px;
+  }
 }
 
 .summary {

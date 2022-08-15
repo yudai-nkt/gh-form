@@ -10,13 +10,13 @@ pub fn deserialize(file: impl AsRef<Path> + Display + Copy) -> Result<Config> {
     return Ok(config);
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 pub struct Config {
     blank_issues_enabled: bool,
     contact_links: Vec<ContactLink>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 struct ContactLink {
     name: String,
     url: String,
@@ -39,6 +39,16 @@ impl Render for Config {
                         {"Open"}
                 }
             }
+        }
+    }
+}
+
+impl Config {
+    pub fn footnote(&self) -> Option<Markup> {
+        if self.blank_issues_enabled {
+            Some(html! { div.footnote {"Don't see your issue here? Open a blank issue."} })
+        } else {
+            None
         }
     }
 }
