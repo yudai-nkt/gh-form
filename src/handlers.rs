@@ -27,6 +27,13 @@ pub struct AppState {
 
 pub async fn top_page(Extension(state): Extension<Arc<AppState>>) -> impl IntoResponse {
     let yamls = list_yamls(&state.directory);
+    let config = if state.directory.join("config.yml").exists() {
+        Some(issue::config::deserialize(
+            &*state.directory.join("config.yml").to_string_lossy(),
+        ))
+    } else {
+        None
+    };
     yamls
         .map(|value| {
             html! {
@@ -64,8 +71,8 @@ pub async fn top_page(Extension(state): Extension<Arc<AppState>>) -> impl IntoRe
                                     )
                                 )
                             }
-                            (issue::config::deserialize(&*state.directory.join("config.yml").to_string_lossy())
-                                .map_or_else(
+                            @if let Some(c) = config {
+                                (c.map_or_else(
                                     |err| {
                                         warn!("Failed to deserialize config.yml");
                                         html! {
@@ -78,8 +85,8 @@ pub async fn top_page(Extension(state): Extension<Arc<AppState>>) -> impl IntoRe
                                         }
                                     },
                                     |val| val.render()
-                                )
-                            )
+                                ))
+                            }
                         }
                     }
                 }
