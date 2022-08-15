@@ -53,7 +53,7 @@ pub async fn top_page(Extension(state): Extension<Arc<AppState>>) -> impl IntoRe
                         href="/assets/extra.css";
                     body ."markdown-body" {
                         div."form-list-container" {
-                            @for yaml in value {
+                            @for yaml in value.iter().filter(|x| x != &"config.yml") {
                                 (issue::form::deserialize(&*state.directory.join(&yaml).to_string_lossy())
                                     .map_or_else(
                                         |err| {
