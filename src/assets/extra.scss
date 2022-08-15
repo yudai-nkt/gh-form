@@ -8,6 +8,11 @@
   --ghf-color-button-primary-hover-border: rgb(27 31 36 / 15%);
   --ghf-color-button-border: rgb(27 31 36 / 15%);
   --ghf-color-button-bg: #f6f8fa;
+  --ghf-color-button-text: #24292f;
+  --ghf-color-button-shadow: 0 1px 0 rgba(27,31,36,0.04);
+  --ghf-color-button-inset-shadow: inset 0 1px 0 rgba(255,255,255,0.25);
+  --ghf-color-button-hover-bg: #f3f4f6;
+  --ghf-color-button-hover-border: rgb(27 31 36 / 15%);
   --ghf-color-canvas-overlay: #ffffff;
   --ghf-color-neutral-subtle: rgb(234 238 242 / 50%);
 }
@@ -207,6 +212,19 @@ textarea[lang] {
     &:hover {
       background-color: var(--ghf-color-button-primary-hover-bg);
       border-color: var(--ghf-color-button-primary-hover-border);
+      text-decoration: none;
+    }
+
+    &.external {
+      color: var(--ghf-color-button-text);
+      background-color: var(--ghf-color-button-bg);
+      border-color: var(--ghf-color-button-border);
+      box-shadow: var(--ghf-color-button-shadow), var(--ghf-color-button-inset-shadow);
+    }
+
+    &.external:hover {
+      background-color: var(--ghf-color-button-hover-bg);
+      border-color: var(--ghf-color-button-hover-border);
       text-decoration: none;
     }
   }
