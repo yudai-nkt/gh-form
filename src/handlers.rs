@@ -11,7 +11,7 @@ use axum::{
     response::{Html, IntoResponse, Response},
     Extension,
 };
-use maud::{html, DOCTYPE};
+use maud::{html, Render, DOCTYPE};
 use rsass::{
     compile_scss,
     output::{Format, Style},
@@ -19,7 +19,7 @@ use rsass::{
 use rust_embed::RustEmbed;
 use tracing::{error, warn};
 
-use crate::form;
+use crate::issue;
 
 pub struct AppState {
     pub directory: PathBuf,
@@ -27,6 +27,13 @@ pub struct AppState {
 
 pub async fn top_page(Extension(state): Extension<Arc<AppState>>) -> impl IntoResponse {
     let yamls = list_yamls(&state.directory);
+    let config = if state.directory.join("config.yml").exists() {
+        Some(issue::config::deserialize(
+            &*state.directory.join("config.yml").to_string_lossy(),
+        ))
+    } else {
+        None
+    };
     yamls
         .map(|value| {
             html! {
@@ -46,8 +53,8 @@ pub async fn top_page(Extension(state): Extension<Arc<AppState>>) -> impl IntoRe
                         href="/assets/extra.css";
                     body ."markdown-body" {
                         div."form-list-container" {
-                            @for yaml in value {
-                                (form::deserialize(&*state.directory.join(&yaml).to_string_lossy())
+                            @for yaml in value.iter().filter(|x| x != &"config.yml") {
+                                (issue::form::deserialize(&*state.directory.join(&yaml).to_string_lossy())
                                     .map_or_else(
                                         |err| {
                                             warn!("Failed to deserialize {}", yaml);
@@ -64,6 +71,27 @@ pub async fn top_page(Extension(state): Extension<Arc<AppState>>) -> impl IntoRe
                                     )
                                 )
                             }
+                            @if let Some(ref c) = config {
+                                (match c {
+                                    Ok(val)=>{val.render()}
+                                    Err(err)=>{
+                                        warn!("Failed to deserialize config.yml");
+                                        html!{
+                                            div.summary {
+                                                div {
+                                                    div {(format!("Failed to deserialize config.yml"))}
+                                                    pre {(format!("{err}"))}
+                                                }
+                                            }
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                        @if let Some(Ok(c)) = config {
+                            @if let Some(footnote) = c.footnote() {
+                                (footnote)
+                            }
                         }
                     }
                 }
@@ -79,7 +107,7 @@ pub async fn preview(
     extract::Path(yaml): extract::Path<String>,
     Extension(state): Extension<Arc<AppState>>,
 ) -> impl IntoResponse {
-    form::deserialize(&*state.directory.join(&yaml).to_string_lossy())
+    issue::form::deserialize(&*state.directory.join(&yaml).to_string_lossy())
         .map(|f| Html(f.to_html().into_string()))
         .map_err(|err| match &*yaml {
             "favicon.ico" => StatusCode::NOT_FOUND,

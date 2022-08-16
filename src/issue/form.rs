@@ -8,14 +8,14 @@ use std::{
     path::Path,
 };
 
-pub fn deserialize(file: impl AsRef<Path> + Display + Copy) -> Result<IssueForm> {
+pub fn deserialize(file: impl AsRef<Path> + Display + Copy) -> Result<Form> {
     let f = fs::File::open(file).with_context(|| format!("Failed to open {}", file))?;
-    let form: IssueForm = serde_yaml::from_reader(f)?;
+    let form: Form = serde_yaml::from_reader(f)?;
     return Ok(form);
 }
 
 #[derive(Debug, Deserialize)]
-pub struct IssueForm {
+pub struct Form {
     name: String,
     description: String,
     // The optional title is in the issue form's spec, but is not used
@@ -30,7 +30,7 @@ pub struct IssueForm {
     body: Vec<BodyType>,
 }
 
-impl IssueForm {
+impl Form {
     pub fn to_html(&self) -> Markup {
         html! {
             (DOCTYPE)
