@@ -94,10 +94,10 @@ jobs:
           files: |
             dist/gh-form_${{ env.TAG }}_windows-amd64.exe
             dist/gh-form_${{ env.TAG }}_windows-arm64.exe
-  # publish-to-cargo-registry:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - run: cargo publish
-  #       env:
-  #         CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+  publish-to-cargo-registry:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: cargo publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
