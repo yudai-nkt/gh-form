@@ -1,4 +1,4 @@
-name: release
+name: Publish a new release
 on:
   push:
     tags:
@@ -37,6 +37,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           draft: false
+          generate_release_notes: true
           prerelease: false
           files: |
             dist/gh-form_${{ env.TAG }}_darwin-arm64
