@@ -9,7 +9,7 @@ on:
 
 jobs:
   token:
-    uses: yudai-nkt/reusable-workflows/.github/workflows/github-apps-token@179ee0565db14332b6ffaa503159ac2473cbcc68
+    uses: yudai-nkt/reusable-workflows/.github/workflows/github-apps-token.yml@edd479a93878640ec9861ab7bf8f1a3413e71d3c
   tag:
     runs-on: ubuntu-latest
     needs: token
