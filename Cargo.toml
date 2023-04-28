@@ -1,6 +1,6 @@
 [package]
 name = "gh-form"
-version = "0.1.5"
+version = "0.1.6"
 authors = ["Yudai Nakata <yudai.nkt@gmail.com>"]
 edition = "2021"
 license = "MIT"
