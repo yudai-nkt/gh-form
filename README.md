@@ -1,6 +1,7 @@
 # gh-form
 
 [![Badge for GitHub Releases](https://img.shields.io/github/v/release/yudai-nkt/gh-form)](https://github.com/yudai-nkt/gh-form/releases)
+[![Badge for Cargo Registry](https://img.shields.io/crates/v/gh-form)](https://crates.io/crates/gh-form)
 
 Don't let malformed issue forms pushed to GitHub
 
