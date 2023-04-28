@@ -14,7 +14,7 @@ keywords = ["cli", "github"]
 anyhow = "1.0.58"
 axum = "0.5.9"
 clap = { version = "3.2.5", features = ["derive"] }
-maud = { git = "https://github.com/lambda-fairy/maud", features = ["axum"] }
+maud = { version = "0.24.0", features = ["axum"] }
 pulldown-cmark = "0.9.1"
 rsass = "0.25.2"
 rust-embed = "6.4.0"
