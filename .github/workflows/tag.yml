@@ -22,7 +22,7 @@ jobs:
         with:
           create-tag: false
           version-command: cargo read-manifest | jq -r .version
-      - uses: mathieudutour/github-tag-action@v6
+      - uses: mathieudutour/github-tag-action@v6.1
         with:
           custom_tag: ${{ steps.version-detection.outputs.current-version }}
           github_token: ${{ needs.token.outputs.token }}
