@@ -1,6 +1,7 @@
 # gh-form
 
 [![Badge for GitHub Releases](https://img.shields.io/github/v/release/yudai-nkt/gh-form)](https://github.com/yudai-nkt/gh-form/releases)
+[![Badge for Cargo Registry](https://img.shields.io/crates/v/gh-form)](https://crates.io/crates/gh-form)
 
 Don't let malformed issue forms pushed to GitHub
 
@@ -24,9 +25,7 @@ gh extension install yudai-nkt/gh-form
 
 ### Rustaceans
 
-~~gh-form is also available on crates.io:~~
-This is currently unavailable due to a limitation in dependencies.
-Please refer to [lambda-fairy/maud#339](https://github.com/lambda-fairy/maud/issues/339) for details.
+gh-form is also available on crates.io:
 
 ```console
 cargo install gh-form

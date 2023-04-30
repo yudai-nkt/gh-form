@@ -1,0 +1,29 @@
+name: Tag a new version
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - Cargo.toml
+
+jobs:
+  token:
+    uses: yudai-nkt/reusable-workflows/.github/workflows/github-apps-token.yml@13f37d64f45c90327522ecb7a015eaf4189d40c4
+  tag:
+    runs-on: ubuntu-latest
+    needs: token
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - uses: salsify/action-detect-and-tag-new-version@v2
+        id: version-detection
+        with:
+          create-tag: false
+          version-command: cargo read-manifest | jq -r .version
+      - uses: mathieudutour/github-tag-action@v6.1
+        with:
+          custom_tag: ${{ steps.version-detection.outputs.current-version }}
+          github_token: ${{ needs.token.outputs.token }}
+        if: ${{ steps.version-detection.outputs.previous-version != steps.version-detection.outputs.current-version }}
