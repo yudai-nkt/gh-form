@@ -345,3 +345,48 @@ fn is_required(validations: &Option<Validations>) -> &str {
         "optional"
     }
 }
+
+#[cfg(test)]
+mod unit_test {
+    use super::*;
+    use pretty_assertions::assert_eq;
+
+    #[test]
+    fn checkbox() {
+        let body = BodyType::Checkboxes {
+            id: "test-checkbox".to_string(),
+            attributes: CheckboxesAttribute {
+                label: "checkbox-test".to_string(),
+                description: Markdown("Make sure you have done the following:".to_string()),
+                options: vec![CheckboxesOption {
+                    label: MarkdownInline("You have searched for the existing issues.".to_string()),
+                    required: true,
+                }],
+            },
+        };
+        assert_eq!(
+            &body.render().into_string(),
+            r#"<div id="test-checkbox"><label><h3>checkbox-test</h3></label></div><div class="body-description"><p>Make sure you have done the following:</p>
+</div><div><div><input type="checkbox" disabled="disabled" value="You have searched for the existing issues."><label class="checkbox-label">You have searched for the existing issues.</label><span class="checkbox-required">*</span></div></div>"#
+        )
+    }
+
+    #[test]
+    fn dropdown() {
+        let body = BodyType::Dropdown {
+            id: "test-dropdown".to_string(),
+            attributes: DropdownAttribute {
+                label: "dropdown-test".to_string(),
+                description: Markdown("Are you a cat or dog person?".to_string()),
+                multiple: false,
+                options: vec!["Cat".to_string(), "Dog".to_string()],
+            },
+            validations: Some(Validations { required: true }),
+        };
+        assert_eq!(
+            &body.render().into_string(),
+            r#"<div id="test-dropdown"><label><h3 required="required">dropdown-test</h3></label></div><div class="body-description"><p>Are you a cat or dog person?</p>
+</div><details class="dropdown-container"><summary role="button">Selection: </summary><div class="choices"><label class="checkbox-label"><input type="radio" name="issue-form[test-dropdown]" hidden value="Cat"><div class="checkmark">✓</div><div>Cat</div></label><label class="checkbox-label"><input type="radio" name="issue-form[test-dropdown]" hidden value="Dog"><div class="checkmark">✓</div><div>Dog</div></label></div></details>"#
+        )
+    }
+}
