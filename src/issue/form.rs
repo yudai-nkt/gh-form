@@ -389,4 +389,62 @@ mod unit_test {
 </div><details class="dropdown-container"><summary role="button">Selection: </summary><div class="choices"><label class="checkbox-label"><input type="radio" name="issue-form[test-dropdown]" hidden value="Cat"><div class="checkmark">✓</div><div>Cat</div></label><label class="checkbox-label"><input type="radio" name="issue-form[test-dropdown]" hidden value="Dog"><div class="checkmark">✓</div><div>Dog</div></label></div></details>"#
         )
     }
+
+    #[test]
+    fn input() {
+        let body = BodyType::Input {
+            id: "prevalence".to_string(),
+            attributes: InputAttribute {
+                label: "Bug prevalence".to_string(),
+                description: Markdown("How often do you or others encounter this bug?".to_string()),
+                placeholder:
+                    "Example: Whenever I visit the personal account page (1-2 times a week)"
+                        .to_string(),
+                value: None,
+            },
+            validations: Some(Validations { required: true }),
+        };
+        assert_eq!(
+            &body.render().into_string(),
+            r#"<div id="prevalence"><label><h3 required="required">Bug prevalence</h3></label></div><div class="body-description"><p>How often do you or others encounter this bug?</p>
+</div><input class="form-input" type="text" disabled="disabled" placeholder="Example: Whenever I visit the personal account page (1-2 times a week)">"#
+        )
+    }
+
+    #[test]
+    fn markdown() {
+        let body = BodyType::Markdown {
+            attributes: MarkdownAttribute {
+                value: Markdown("## Thank you for contributing to our project!".to_string()),
+            },
+        };
+        assert_eq!(
+            &body.render().into_string(),
+            r#"<div class="markdown-description"><h2>Thank you for contributing to our project!</h2>
+</div>"#
+        )
+    }
+
+    #[test]
+    fn textarea() {
+        let body = BodyType::Textarea {
+            id: "repro".to_string(),
+            attributes: TextareaAttribute {
+                label: "Reproduction steps".to_string(),
+                description: Markdown(
+                    "How do you trigger this bug? Please walk us through it step by step."
+                        .to_string(),
+                ),
+                placeholder: "".to_string(),
+                value: "".to_string(),
+                render: None,
+            },
+            validations: Some(Validations { required: true }),
+        };
+        assert_eq!(
+            &body.render().into_string(),
+            r#"<div id="repro"><label><h3 required="required">Reproduction steps</h3></label></div><div class="body-description"><p>How do you trigger this bug? Please walk us through it step by step.</p>
+</div><textarea class="form-textarea" disabled="disabled" placeholder=""></textarea>"#
+        )
+    }
 }
