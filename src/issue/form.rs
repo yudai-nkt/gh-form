@@ -354,39 +354,54 @@ mod unit_test {
     #[test]
     fn checkbox() {
         let body = BodyType::Checkboxes {
-            id: "test-checkbox".to_string(),
+            id: "operating-systems".to_string(),
             attributes: CheckboxesAttribute {
-                label: "checkbox-test".to_string(),
-                description: Markdown("Make sure you have done the following:".to_string()),
-                options: vec![CheckboxesOption {
-                    label: MarkdownInline("You have searched for the existing issues.".to_string()),
-                    required: true,
-                }],
+                label: "Which operating systems have you used?".to_string(),
+                description: Markdown("You may select more than one.".to_string()),
+                options: vec![
+                    CheckboxesOption {
+                        label: MarkdownInline("macOS.".to_string()),
+                        required: false,
+                    },
+                    CheckboxesOption {
+                        label: MarkdownInline("Windows.".to_string()),
+                        required: false,
+                    },
+                    CheckboxesOption {
+                        label: MarkdownInline("Linux.".to_string()),
+                        required: false,
+                    },
+                ],
             },
         };
         assert_eq!(
             &body.render().into_string(),
-            r#"<div id="test-checkbox"><label><h3>checkbox-test</h3></label></div><div class="body-description"><p>Make sure you have done the following:</p>
-</div><div><div><input type="checkbox" disabled="disabled" value="You have searched for the existing issues."><label class="checkbox-label">You have searched for the existing issues.</label><span class="checkbox-required">*</span></div></div>"#
+            r#"<div id="operating-systems"><label><h3>Which operating systems have you used?</h3></label></div><div class="body-description"><p>You may select more than one.</p>
+</div><div><div><input type="checkbox" disabled="disabled" value="macOS."><label class="checkbox-label">macOS.</label></div><div><input type="checkbox" disabled="disabled" value="Windows."><label class="checkbox-label">Windows.</label></div><div><input type="checkbox" disabled="disabled" value="Linux."><label class="checkbox-label">Linux.</label></div></div>"#
         )
     }
 
     #[test]
     fn dropdown() {
         let body = BodyType::Dropdown {
-            id: "test-dropdown".to_string(),
+            id: "download".to_string(),
             attributes: DropdownAttribute {
                 label: "dropdown-test".to_string(),
-                description: Markdown("Are you a cat or dog person?".to_string()),
+                description: Markdown("How did you download the software?".to_string()),
                 multiple: false,
-                options: vec!["Cat".to_string(), "Dog".to_string()],
+                options: vec![
+                    "Homebrew".to_string(),
+                    "MacPorts".to_string(),
+                    "apt-get".to_string(),
+                    "Built from source".to_string(),
+                ],
             },
             validations: Some(Validations { required: true }),
         };
         assert_eq!(
             &body.render().into_string(),
-            r#"<div id="test-dropdown"><label><h3 required="required">dropdown-test</h3></label></div><div class="body-description"><p>Are you a cat or dog person?</p>
-</div><details class="dropdown-container"><summary role="button">Selection: </summary><div class="choices"><label class="checkbox-label"><input type="radio" name="issue-form[test-dropdown]" hidden value="Cat"><div class="checkmark">✓</div><div>Cat</div></label><label class="checkbox-label"><input type="radio" name="issue-form[test-dropdown]" hidden value="Dog"><div class="checkmark">✓</div><div>Dog</div></label></div></details>"#
+            r#"<div id="download"><label><h3 required="required">dropdown-test</h3></label></div><div class="body-description"><p>How did you download the software?</p>
+</div><details class="dropdown-container"><summary role="button">Selection: </summary><div class="choices"><label class="checkbox-label"><input type="radio" name="issue-form[download]" hidden value="Homebrew"><div class="checkmark">✓</div><div>Homebrew</div></label><label class="checkbox-label"><input type="radio" name="issue-form[download]" hidden value="MacPorts"><div class="checkmark">✓</div><div>MacPorts</div></label><label class="checkbox-label"><input type="radio" name="issue-form[download]" hidden value="apt-get"><div class="checkmark">✓</div><div>apt-get</div></label><label class="checkbox-label"><input type="radio" name="issue-form[download]" hidden value="Built from source"><div class="checkmark">✓</div><div>Built from source</div></label></div></details>"#
         )
     }
 
