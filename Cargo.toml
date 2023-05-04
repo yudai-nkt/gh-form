@@ -20,7 +20,7 @@ rsass = "0.25.2"
 rust-embed = "6.4.0"
 serde = { version = "1.0.137", features = ["derive"] }
 serde_yaml = "0.8.24"
-tokio = { version = "1.19.2", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.20.4", features = ["macros", "rt-multi-thread"] }
 tracing = "0.1.35"
 tracing-subscriber = "0.3.11"
 
