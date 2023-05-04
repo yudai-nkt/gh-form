@@ -345,3 +345,121 @@ fn is_required(validations: &Option<Validations>) -> &str {
         "optional"
     }
 }
+
+#[cfg(test)]
+mod unit_test {
+    use super::*;
+    use pretty_assertions::assert_eq;
+
+    #[test]
+    fn checkbox() {
+        let body = BodyType::Checkboxes {
+            id: "operating-systems".to_string(),
+            attributes: CheckboxesAttribute {
+                label: "Which operating systems have you used?".to_string(),
+                description: Markdown("You may select more than one.".to_string()),
+                options: vec![
+                    CheckboxesOption {
+                        label: MarkdownInline("macOS.".to_string()),
+                        required: false,
+                    },
+                    CheckboxesOption {
+                        label: MarkdownInline("Windows.".to_string()),
+                        required: false,
+                    },
+                    CheckboxesOption {
+                        label: MarkdownInline("Linux.".to_string()),
+                        required: false,
+                    },
+                ],
+            },
+        };
+        assert_eq!(
+            &body.render().into_string(),
+            r#"<div id="operating-systems"><label><h3>Which operating systems have you used?</h3></label></div><div class="body-description"><p>You may select more than one.</p>
+</div><div><div><input type="checkbox" disabled="disabled" value="macOS."><label class="checkbox-label">macOS.</label></div><div><input type="checkbox" disabled="disabled" value="Windows."><label class="checkbox-label">Windows.</label></div><div><input type="checkbox" disabled="disabled" value="Linux."><label class="checkbox-label">Linux.</label></div></div>"#
+        )
+    }
+
+    #[test]
+    fn dropdown() {
+        let body = BodyType::Dropdown {
+            id: "download".to_string(),
+            attributes: DropdownAttribute {
+                label: "dropdown-test".to_string(),
+                description: Markdown("How did you download the software?".to_string()),
+                multiple: false,
+                options: vec![
+                    "Homebrew".to_string(),
+                    "MacPorts".to_string(),
+                    "apt-get".to_string(),
+                    "Built from source".to_string(),
+                ],
+            },
+            validations: Some(Validations { required: true }),
+        };
+        assert_eq!(
+            &body.render().into_string(),
+            r#"<div id="download"><label><h3 required="required">dropdown-test</h3></label></div><div class="body-description"><p>How did you download the software?</p>
+</div><details class="dropdown-container"><summary role="button">Selection: </summary><div class="choices"><label class="checkbox-label"><input type="radio" name="issue-form[download]" hidden value="Homebrew"><div class="checkmark">✓</div><div>Homebrew</div></label><label class="checkbox-label"><input type="radio" name="issue-form[download]" hidden value="MacPorts"><div class="checkmark">✓</div><div>MacPorts</div></label><label class="checkbox-label"><input type="radio" name="issue-form[download]" hidden value="apt-get"><div class="checkmark">✓</div><div>apt-get</div></label><label class="checkbox-label"><input type="radio" name="issue-form[download]" hidden value="Built from source"><div class="checkmark">✓</div><div>Built from source</div></label></div></details>"#
+        )
+    }
+
+    #[test]
+    fn input() {
+        let body = BodyType::Input {
+            id: "prevalence".to_string(),
+            attributes: InputAttribute {
+                label: "Bug prevalence".to_string(),
+                description: Markdown("How often do you or others encounter this bug?".to_string()),
+                placeholder:
+                    "Example: Whenever I visit the personal account page (1-2 times a week)"
+                        .to_string(),
+                value: None,
+            },
+            validations: Some(Validations { required: true }),
+        };
+        assert_eq!(
+            &body.render().into_string(),
+            r#"<div id="prevalence"><label><h3 required="required">Bug prevalence</h3></label></div><div class="body-description"><p>How often do you or others encounter this bug?</p>
+</div><input class="form-input" type="text" disabled="disabled" placeholder="Example: Whenever I visit the personal account page (1-2 times a week)">"#
+        )
+    }
+
+    #[test]
+    fn markdown() {
+        let body = BodyType::Markdown {
+            attributes: MarkdownAttribute {
+                value: Markdown("## Thank you for contributing to our project!".to_string()),
+            },
+        };
+        assert_eq!(
+            &body.render().into_string(),
+            r#"<div class="markdown-description"><h2>Thank you for contributing to our project!</h2>
+</div>"#
+        )
+    }
+
+    #[test]
+    fn textarea() {
+        let body = BodyType::Textarea {
+            id: "repro".to_string(),
+            attributes: TextareaAttribute {
+                label: "Reproduction steps".to_string(),
+                description: Markdown(
+                    "How do you trigger this bug? Please walk us through it step by step."
+                        .to_string(),
+                ),
+                placeholder: "".to_string(),
+                value: "".to_string(),
+                render: None,
+            },
+            validations: Some(Validations { required: true }),
+        };
+        assert_eq!(
+            &body.render().into_string(),
+            r#"<div id="repro"><label><h3 required="required">Reproduction steps</h3></label></div><div class="body-description"><p>How do you trigger this bug? Please walk us through it step by step.</p>
+</div><textarea class="form-textarea" disabled="disabled" placeholder=""></textarea>"#
+        )
+    }
+}
