@@ -3,6 +3,9 @@ changelog:
     labels:
       - ignore-for-release
   categories:
+    - title: Security Fixes
+      labels:
+        - security
     - title: Bug Fixes
       labels:
         - bug fix
